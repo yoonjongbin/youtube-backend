@@ -13,8 +13,19 @@
         mustache를 쓰는 이유
         코드가 더 간단해진다.
     -->
-    <h1>Main{{test}}</h1>
+    <h1>Main</h1>
 
+    <div>{{category}}</div>
+
+
+    <ul>
+        <!-- #key 를 하면 해당하는 변수만 사용하여 해당 변수안에 있는 속성들을 사용할 수 있다. -->
+        {{#category}}
+
+            <li>{{categoryName}}</li>
+
+        {{/category}}
+    </ul>
 
 
 </body>
