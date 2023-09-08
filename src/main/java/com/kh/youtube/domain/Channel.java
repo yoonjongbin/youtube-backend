@@ -1,5 +1,6 @@
 package com.kh.youtube.domain;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Channel {
