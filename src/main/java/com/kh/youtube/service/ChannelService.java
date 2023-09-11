@@ -2,8 +2,6 @@ package com.kh.youtube.service;
 
 import com.kh.youtube.domain.Channel;
 import com.kh.youtube.domain.Member;
-import com.kh.youtube.repo.ChannelDAO;
-import com.kh.youtube.repo.MemberDAO;
 import com.kh.youtube.repository.ChannelDAO;
 import com.kh.youtube.repository.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ public class ChannelService {
 
     public Channel show(int id){
         Channel channel = channelDAO.findById(id).orElse(null); // 채널에 대한 정보만
-        Member member =  memberDAO.findById(channel.getMember().getMemberId()).orElse(null); // channel의 member(getId)를 통해 멤버 정보 받아와서 member에 담기
+        Member member =  memberDAO.findById(channel.getMember().getId()).orElse(null); // channel의 member(getId)를 통해 멤버 정보 받아와서 member에 담기
         channel.setMember(member);
         return channel;
     }

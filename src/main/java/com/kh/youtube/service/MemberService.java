@@ -1,14 +1,12 @@
 package com.kh.youtube.service;
 
 import com.kh.youtube.domain.Member;
-import com.kh.youtube.repo.MemberDAO;
 import com.kh.youtube.repository.MemberDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j // log 출력(lombok에서 제공)
 @Service
@@ -34,7 +32,7 @@ public class MemberService {
 
     public Member update(Member member){
         // UPDATE MEMBER SET ID = ?, PASSWORD = ? , NAME = ? , AUTHORITY = ? WHERE ID = ?
-        Member target = dao.findById(member.getMemberId()).orElse(null);
+        Member target = dao.findById(member.getId()).orElse(null);
         if(target!=null){ // 기존 회원인 경우에만 수정, 아닌 경우에는 null로 리턴
             return dao.save(member); 
         }

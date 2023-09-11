@@ -17,31 +17,31 @@ import java.util.List;
 @RequestMapping("/api/*")
 public class MemberController {
     @Autowired
-    private MemberService service;
+    private MemberService memberService;
 
     @Autowired
     private ChannelService channelService;
 
     @GetMapping("/user")
     public ResponseEntity<List<Member>> showAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.showAll());
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<Member> show(@PathVariable String id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
     @PostMapping("/user")
     public ResponseEntity<Member> create(@RequestBody Member member){
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(member));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.create(member));
     }
 
     @PutMapping("/user")
     public ResponseEntity<Member> update(@RequestBody Member member){
-        Member result = service.update(member);
+        Member result = memberService.update(member);
         if(result!=null){
-            return ResponseEntity.status(HttpStatus.OK).body(service.update(member));
+            return ResponseEntity.status(HttpStatus.OK).body(memberService.update(member));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
@@ -50,11 +50,11 @@ public class MemberController {
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Member> delete(@PathVariable String id){
         log.info(id + "삭제");
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
     }
 
     // SELECT * FROM channel WHERE id=?(특정 멤버의 모든 채널 조회) => DAO에서 추가
-    // http://localhost:8080/user/channel?id=user1
+    // http://localhost:8080/api/user/channel?id=user1
     @GetMapping("/user/channel")
     public ResponseEntity<List<Channel>> showMember(@RequestParam String id){
         return ResponseEntity.status(HttpStatus.OK).body(channelService.showMember(id));
