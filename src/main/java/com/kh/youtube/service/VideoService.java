@@ -45,4 +45,8 @@ public class VideoService {
         return target;
     }
 
+    public List<Video> findByChannelCode(int code){
+        return videoDAO.findByChannelCode(code);
+    }
+
 }

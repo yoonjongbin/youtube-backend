@@ -45,4 +45,8 @@ public class SubscribeService {
 
         return target;
     }
+
+    public List<Subscribe> findByMemberId(String id){
+        return subscribeDAO.findByMemberId(id);
+    }
 }

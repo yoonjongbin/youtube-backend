@@ -45,4 +45,8 @@ public class VideoCommentService {
 
         return target;
     }
+
+    public List<VideoComment> findByVideoCode(int code){
+        return videoCommentDAO.findByVideoCode(code);
+    }
 }
