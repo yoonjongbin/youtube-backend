@@ -13,33 +13,29 @@ import java.util.List;
 @RequestMapping("/api/*")
 public class ChannelController {
 
-    @Autowired
-    private ChannelService service;
+    // 채널 조회
+    
+    
+    // 채널에 존재하는 영상 조회
+    
+    
+    // 채널 추가
+    
+    
+    // 채널 수정
+    
+    
+    // 채널 삭제
+    
+    
+    // 내가 구독한 채널 조회
+    
+    
+    // 채널 구독
+    
+    
+    // 채널 구독 취소
 
-    @GetMapping("/channel")
-    public ResponseEntity<List<Channel>> showAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
-    }
 
-
-    @GetMapping("/channel/{id}") // 채널 코드로 특정 채널 보기
-    public ResponseEntity<Channel> show(@PathVariable int id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
-    }
-
-    @PostMapping("/channel")
-    public ResponseEntity<Channel> create(@RequestBody Channel channel){
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(channel));
-    }
-
-    @PutMapping("/channel")
-    public ResponseEntity<Channel> update(@RequestBody Channel channel){
-        return ResponseEntity.status(HttpStatus.OK).body(service.update(channel));
-    }
-
-    @DeleteMapping("/channel/{id}")
-    public ResponseEntity<Channel> delete(@PathVariable int id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
-    }
 
 }
