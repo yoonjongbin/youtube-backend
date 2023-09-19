@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import java.util.Date;
 
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
