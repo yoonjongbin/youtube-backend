@@ -1,25 +1,36 @@
 package com.kh.youtube.controller;
 
 
-import com.kh.youtube.domain.CommentLike;
-import com.kh.youtube.domain.Video;
-import com.kh.youtube.domain.VideoComment;
-import com.kh.youtube.domain.VideoLike;
-import com.kh.youtube.repository.VideoLikeDAO;
+import com.kh.youtube.domain.*;
 import com.kh.youtube.service.CommentLikeService;
 import com.kh.youtube.service.VideoCommentService;
 import com.kh.youtube.service.VideoLikeService;
 import com.kh.youtube.service.VideoService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/*")
+@Log4j2
+@CrossOrigin(origins = {"*"}, maxAge = 6000)
 public class VideoController {
+
+
+    // application.properties에 있는 변수
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
 
     @Autowired
     private VideoService videoService;
@@ -43,9 +54,75 @@ public class VideoController {
     
     // 영상 추가 : POST - http://localhost:8080/api/video
     @PostMapping("/video")
-    public ResponseEntity<Video> newVideo(@RequestBody Video vo){
+    public ResponseEntity<Video> newVideo(MultipartFile video, MultipartFile image, String title, String desc, String categoryCode){
+        log.info("video : " + video);
+        log.info("image : " + image);
+        log.info("title : " + title);
+        log.info("desc : " + desc);
+        log.info("categoryCode : " + categoryCode);
+
+
+        // video_title, video_desc, video_url, video_photo, category_code
+
+//        업로드 처리
+//        비디오 실제 파일 이름
+        String originalVideo = video.getOriginalFilename();
+        log.info("oriVideo : " + originalVideo);
+
+//        originalVideo의 마지막 부분 잘라서 온다
+        String realVideo = originalVideo.substring(originalVideo.lastIndexOf("\\") + 1);
+
+//        이미지 실제 파일 이름
+        String originalImage = image.getOriginalFilename();
+        String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
+        log.info("oriImg : " + originalImage);
+
+        log.info("realVideo : " + realVideo);
+        log.info("realImage : " + realImage);
+
+//        UUID
+        String uuid = UUID.randomUUID().toString();
+
+
+//        실제로 저장할 파일 명 (위치포함)
+        String saveVideo = uploadPath + File.separator + uuid + "_" + realVideo;
+        String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+
+        Path pathVideo = Paths.get(saveVideo);
+        Path pathImage = Paths.get(saveImage);
+        try {
+            video.transferTo(pathVideo);
+            image.transferTo(pathImage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Video vo = new Video();
+
+        vo.setVideoTitle(title);
+        vo.setVideoDesc(desc);
+        Category category = new Category();
+        category.setCategoryCode(Integer.parseInt(categoryCode));
+        vo.setCategory(category);
+        vo.setVideoUrl(saveVideo);
+        vo.setVideoPhoto(saveImage);
+        Channel channel = new Channel();
+        channel.setChannelCode(1);
+        vo.setChannel(channel);
+        Member member = new Member();
+        member.setId("user1");
+        vo.setMember(member);
+
+//        return ResponseEntity.status(HttpStatus.OK).build();
         return ResponseEntity.status(HttpStatus.OK).body(videoService.create(vo));
     }
+
+
+    // 영상 추가 : POST - http://localhost:8080/api/video
+//    @PostMapping("/video")
+//    public ResponseEntity<Video> newVideo(@RequestBody Video vo){
+//        return ResponseEntity.status(HttpStatus.OK).body(videoService.create(vo));
+//    }
     
     // 영상 수정 : PUT - http://localhost:8080/api/video
     @PutMapping("/video")
