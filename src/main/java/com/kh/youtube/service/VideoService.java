@@ -5,6 +5,8 @@ import com.kh.youtube.domain.VideoComment;
 import com.kh.youtube.repository.VideoCommentDAO;
 import com.kh.youtube.repository.VideoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +17,11 @@ public class VideoService {
     @Autowired
     private VideoDAO videoDAO;
 
-    public List<Video> showAll(){
-        return videoDAO.findAll();
+    public Page<Video> showAll(Pageable pageable){
+
+        // dao.findAll() -> List<Video>
+        // dao.findAll(pageable) -> Page<Video>
+        return videoDAO.findAll(pageable);
     }
 
     public Video show(int id){

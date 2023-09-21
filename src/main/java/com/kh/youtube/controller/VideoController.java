@@ -9,6 +9,10 @@ import com.kh.youtube.service.VideoService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +51,31 @@ public class VideoController {
 
     // 영상 전체 조회 : GET - http://localhost:8080/api/video
     @GetMapping("/video")
-    public ResponseEntity<List<Video>> showAllVideo(){
-        return ResponseEntity.status(HttpStatus.OK).body(videoService.showAll());
+    public ResponseEntity<List<Video>> showAllVideo(@RequestParam(name = "page", defaultValue = "1") int page){
+//        정렬
+        Sort sort = Sort.by("videoCode").descending();
+
+//        한 페이지의 10개(기본값 0에서 시작, 형식 : 시작, 갯수, 정렬방식)
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
+        Page<Video> result = videoService.showAll(pageable);
+
+        log.info("Total Pages : " + result.getTotalPages()); // 총 몇 페이지
+        log.info("Total Count : " + result.getTotalElements()); // 전체 개수
+        log.info("Page Number : " + result.getNumber()); // 현재 페이지 번호
+        log.info("Page Size : " + result.getSize()); // 페이지 당 데이터 개수
+        log.info("Next Page : " + result.hasNext()); // 다음 페이지 존재 여부
+        log.info("First Page : " + result.isFirst()); // 시작 페이지 여부
+
+//        return ResponseEntity.status(HttpStatus.OK).build();
+        // getContent()는 반환 타입이 List
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
     
     // 영상 추가 : POST - http://localhost:8080/api/video
     @PostMapping("/video")
-    public ResponseEntity<Video> newVideo(MultipartFile video, MultipartFile image, String title, String desc, String categoryCode){
+    // @RequestParam의 required = false 속성은 필수로 값을 넣지 않아도 되게 해준다.
+    public ResponseEntity<Video> newVideo(MultipartFile video, MultipartFile image, String title, @RequestParam(name = "desc", required = false) String desc, String categoryCode){
         log.info("video : " + video);
         log.info("image : " + image);
         log.info("title : " + title);
@@ -104,8 +125,11 @@ public class VideoController {
         Category category = new Category();
         category.setCategoryCode(Integer.parseInt(categoryCode));
         vo.setCategory(category);
-        vo.setVideoUrl(saveVideo);
-        vo.setVideoPhoto(saveImage);
+//        vo.setVideoUrl(saveVideo);
+//        vo.setVideoPhoto(saveImage);
+        // 상대경로이기 때문에 파일명만 넣는다.
+        vo.setVideoUrl(uuid + "_" + realVideo);
+        vo.setVideoPhoto(uuid + "_" + realImage);
         Channel channel = new Channel();
         channel.setChannelCode(1);
         vo.setChannel(channel);

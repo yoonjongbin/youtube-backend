@@ -80,7 +80,8 @@ public class ChannelController {
         Path pathPhoto = Paths.get(savePhoto);
 
         Channel vo =  new Channel();
-        vo.setChannelPhoto(savePhoto);
+//        vo.setChannelPhoto(savePhoto);
+        vo.setChannelPhoto(uuid + "_" + realPhoto);
         vo.setChannelName(name);
         vo.setChannelDesc(desc);
         Member member = new Member();
