@@ -6,6 +6,8 @@ import com.kh.youtube.service.CommentLikeService;
 import com.kh.youtube.service.VideoCommentService;
 import com.kh.youtube.service.VideoLikeService;
 import com.kh.youtube.service.VideoService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +35,7 @@ public class VideoController {
 
 
     // application.properties에 있는 변수
-    @Value("${spring.servlet.multipart.location}")
+    @Value("${youtube.upload.path}")
     private String uploadPath;
 
     @Autowired
@@ -51,13 +53,34 @@ public class VideoController {
 
     // 영상 전체 조회 : GET - http://localhost:8080/api/video
     @GetMapping("/video")
-    public ResponseEntity<List<Video>> showAllVideo(@RequestParam(name = "page", defaultValue = "1") int page){
+    public ResponseEntity<List<Video>> showAllVideo(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "category", required = false) Integer category){
 //        정렬
         Sort sort = Sort.by("videoCode").descending();
 
 //        한 페이지의 10개(기본값 0에서 시작, 형식 : 시작, 갯수, 정렬방식)
-        Pageable pageable = PageRequest.of(page-1, 10, sort);
-        Page<Video> result = videoService.showAll(pageable);
+        Pageable pageable = PageRequest.of(page-1, 20, sort);
+        
+        
+        // 동적 쿼리를 위한 QueryDSL을 사용한 코드들 추가
+        // 1. Q도메인 클래스를 가져와야 한다.
+
+        // QVideo가 안뜨면 gradle에서 buildGradle을 한번더 설치해주자.
+        QVideo qVideo = QVideo.video;
+
+        // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
+        BooleanBuilder builder = new BooleanBuilder();
+
+
+        if(category != null){
+            // 3. 원하는 조건은 필드값과 같이 결합해서 생성한다.
+            BooleanExpression expression = qVideo.category.categoryCode.eq(category);
+            // 4. 만들어진 조건은 where문에 and와 or 같은 키워드와 결합한다.
+            builder.and(expression);
+        }
+
+
+
+        Page<Video> result = videoService.showAll(pageable, builder);
 
         log.info("Total Pages : " + result.getTotalPages()); // 총 몇 페이지
         log.info("Total Count : " + result.getTotalElements()); // 전체 개수
@@ -131,7 +154,7 @@ public class VideoController {
         vo.setVideoUrl(uuid + "_" + realVideo);
         vo.setVideoPhoto(uuid + "_" + realImage);
         Channel channel = new Channel();
-        channel.setChannelCode(1);
+        channel.setChannelCode(2);
         vo.setChannel(channel);
         Member member = new Member();
         member.setId("user1");

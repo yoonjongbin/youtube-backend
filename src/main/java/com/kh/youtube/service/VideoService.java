@@ -4,6 +4,7 @@ import com.kh.youtube.domain.Video;
 import com.kh.youtube.domain.VideoComment;
 import com.kh.youtube.repository.VideoCommentDAO;
 import com.kh.youtube.repository.VideoDAO;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +18,13 @@ public class VideoService {
     @Autowired
     private VideoDAO videoDAO;
 
-    public Page<Video> showAll(Pageable pageable){
+    public Page<Video> showAll(Pageable pageable, BooleanBuilder builder){
 
         // dao.findAll() -> List<Video>
         // dao.findAll(pageable) -> Page<Video>
-        return videoDAO.findAll(pageable);
+
+        // builder를 먼저 넘겨줘야 한다.
+        return videoDAO.findAll(builder, pageable);
     }
 
     public Video show(int id){
