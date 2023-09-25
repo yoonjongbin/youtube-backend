@@ -2,6 +2,7 @@ package com.kh.youtube.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert // default값 자동으로 추가
+@Builder
 public class Member {
 
 	@Id // primary key
